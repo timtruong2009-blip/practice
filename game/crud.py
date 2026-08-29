@@ -1,7 +1,6 @@
 
+from . import model, schemas
 import sqlalchemy.orm
-import model
-import schemas
 
 #get ALL the player data, make db a session so we can comminicate with database
 def get_players_db(db: sqlalchemy.orm.Session):
@@ -15,7 +14,7 @@ def get_one_player_db(db: sqlalchemy.orm.Session, player_id: int):
 # creating a new player,  name and password required
 # get themplate for what we need from schemas, get player template from model
 def create_player(db: sqlalchemy.orm.Session, player: schemas.CheckingPlayerCreation):
-     new_player = model.Player(name=player.name)
+     new_player = model.Player(name=player.name, password = player.password)
      db.add(new_player)
      db.commit()
      db.refresh(new_player)

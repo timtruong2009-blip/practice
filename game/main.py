@@ -1,10 +1,8 @@
 
 from fastapi import FastAPI, Depends
 import sqlalchemy.orm
-import model
-import schemas
-import crud
-import database
+from . import model, schemas, crud, database
+
 
 # get Base, get blueprint of Base(metadata), if it doesn't exist, create it(create_all)
 # database.engine is the phone number of the database, tell it to create in that
@@ -19,16 +17,18 @@ def read_root():
 
 # return all player,
 @app.get("/players/", response_model=list[schemas.Player])
-def give_all_players(db: sqlalchemy.orm.Session):
+def give_all_players(db: sqlalchemy.orm.Session= Depends(database.get_db)):
     return crud.get_players_db(db)
 
 # return one player using id
 @app.get("/players/{player_id}", response_model=schemas.Player)
-def give_one_players(player_id: int, db: sqlalchemy.orm.Session):
+def give_one_players(player_id: int, db: sqlalchemy.orm.Session= Depends(database.get_db)):
     db_player = crud.get_one_player_db(db, player_id)
     return db_player
 
-
+@app.post("/players/", response_model=schemas.Player)
+def create_player(player: schemas.CheckingPlayerCreation, db: sqlalchemy.orm.Session = Depends(database.get_db)):
+    return crud.create_player(db, player)
 
 
 
